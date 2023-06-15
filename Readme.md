@@ -23,14 +23,11 @@ used for this process didn't have a simple way to be modified to allow for ports
 to be kept on the proper side of the device, as cable management started to be an
 issue.
 
-
 ### Usage:
 1. **Download From GitHub** - Using `git Clone https://github.com/Hopalonger/CutSheetCreator.git`
 2. **Installation** - This tool requires a few Dependencies to operate
-these can be installed by running these commands `pip install tabulate`,
-`pip install selenium`. Once these Dependencies have been intalled, open
-`OpenL2MScrape.py` in a text editor and set `User_cred` to be your OpenL2M Login username,
-and set `Pass_cred` to be your OpenL2M Login Password. These will be stored here locally
+these can be installed by running these commands `pip install tabulate`, `pip install beautifulsoup4`,`pip install selenium`. Once these Dependencies have been intalled, open
+`loop.py` in a text editor and update the file directory with the proper paths to the Main Directory, the Input Directory, the Output Directory, and the Completed Directory. 
 
 3. **Importing Reports** - This system is designed to Use specific AKIPS reports,
 the report that we are going to use is going to to be gotten from using the
@@ -40,8 +37,9 @@ Once this file has been downloaded I recommend renaming it as the device name
 just to keep track of it. Then move the file into the Input folder of the Program
 
 4. **Running the Program** - to run the program it is very straight forward,
-all it takes is running `python loop.py` and it will find all of the files and
-process them into the reports
+all it takes is running `python loop.py -u ONID-USERNAME -p ONID-PASSWORD` and it will find all of the files and process them into the reports. Make Sure to replace `ONID-USERNAME` and `ONID-PASSWORD` with your own username and password. 
+
+
 5. **Understanding output** - Understanding the output of the program can be a
 bit much, it was designed to be as simple as possible, but still can be alot
 The termal and main ouput file will display a table that looks like this:
@@ -79,6 +77,9 @@ as HPE is another section of hardware.
 ### Examples:
 There are example files that are loaded into the input folder, and its respective outputs are in the output folder, although when the program runs your cutsheets once processed will be moved into the Completed folder.
 
+
+### Troubleshooting:
+If you get an error that states that the chromedriver that is being used is out of date or the wrong version of the chromedriver. Please go to `https://chromedriver.chromium.org/downloads` and download the version of the chromedriver that is requested by the error. Once downloaded please move `chromedriver.exe` to the Main Directory of cutsheet creator, or install it as a path variable and delete the old version. 
 
 ### Features:
 - Custom Cutoff Date Selection
