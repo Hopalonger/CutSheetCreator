@@ -47,9 +47,9 @@ def GetInputFiles():
     return filenames
 
 
-if args.file[0] != "":
+if args.file[0] != "loop":
     print("Moving User Input File")
-    shutil.move(args.file[0], mypath + "/ userinput.csv")
+    shutil.move(args.file[0], mypath + "/userinput.csv")
 
 # Get all Input Files From Input Directory
 Files = GetInputFiles()
@@ -68,11 +68,6 @@ for File in Files:
         
 
         Filepath =  mypath + "/" + File
-
-        # Check if Individual File Pass Through Argument was selected.
-        if args.file != "loop":
-            print("Individual File Processing Selected Skipping Files Found Above, Processing: " + args.file[0])
-            Filepath = args.file
 
         shutil.move(Filepath,Local +"/" + File )#Move file from input folder to main dir for processing
         #Completed = Completed + "/" + File
