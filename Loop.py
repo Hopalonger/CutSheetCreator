@@ -23,12 +23,17 @@ parser.add_argument('--password', '-p',
 parser.add_argument('--mode', '-m',
                     help='[UNFINISHED WIP] Port Organizational Mode, Options: Managed, Unmanaged, Managed attempts to organizes interfaces and Patch Panel Cables through reordering Jack numbers then paring with interface (For full rewires) [ Defaults: Unmanaged]', nargs=1, default="Unmanaged")
 
+parser.add_argument('--file', '-f',
+                    help='Specify File Path for file that you want to parse, this will only run that singular file [Default: Will loop through input]', nargs=1, default="loop")
+
+
 
 args = parser.parse_args()
 # print(parser.parse_args())
 # Get the Username
 print(args.username[0])
 print(args.password[0])
+print(args.file[0])
 
 def GetInputFiles():
 
@@ -39,6 +44,13 @@ def GetInputFiles():
 
 # Get all Input Files From Input Directory
 Files = GetInputFiles()
+
+# Check if Individual File Pass Through Argument was selected. 
+if args.file != "loop":
+    print("Individual File Processing Selected Skipping Files Found Above, Processing: " + args.file[0])
+    Files = args.file
+
+
 # Start the Selinum Instance 
 print("Logging Into OpenL2MScrape")
 # Log the user into OpenL2m 

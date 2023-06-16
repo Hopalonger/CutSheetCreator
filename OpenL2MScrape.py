@@ -41,19 +41,28 @@ def getVlan(switchUrl): #Get the vlans and write them to a file
     soup = BeautifulSoup(html, 'html.parser')
     VlanList = []
     for input in soup.find_all('option', selected=True):
-    #    print(input)
+        #print(input)
         Words = input.getText() # Get the text, its very long
-        # print(Words)
+        #print(Words)
         List = Words.split("\n") # split the new line values into list
+        #print(List)
         try:
             List[1] = List[1].strip() # Remove whitespace from second item in list
+            #print(List[1])
             row = [input.get('value'), List[1][2:]]
+           # print(row)
             VlanList.append(row)
         #    print(row)
         #    writer.writerow(row)
         except IndexError:
-            print("Error")
+            print("Error parsing Vlans, Please Enter the Vlan Manually:")
+            print(List)
+            
+            row = ["999","Error Parsing Vlan Please edit Manally"]
+            VlanList.append(row)
 
+            
+    #print(VlanList)
 
     # Get The Port Description
     table = soup.find('table', class_='table table-hover table-headings w-auto')
@@ -74,21 +83,27 @@ def getVlan(switchUrl): #Get the vlans and write them to a file
                 Interface = data.text.strip()
                 # If this is the first colum of the row and the Interface is not a F Type interface
                 if(t == 0):
-                    if(Interface[0] == "T" or Interface[0] == "G"):
+                    #if (Interface[0] == "T" or Interface[0] == "G"):
+                    if(Interface[0] == "G"):
                         # Add the Interface to a new list of ports
                         PortList.append(Interface)
                 t = t + 1
         Num = 1 + Num
-
+    print(PortList)
     # Combined the Lists Together
     Combined = []
     i = 0
     for Vlans in VlanList:
         # Set the list to have the Port, Vlan Number, then vlan Name
         #print(PortList[i])
-        Alinged_List = [PortList[i],Vlans[0],Vlans[1]]
-        Combined.append(Alinged_List)
-        i = i + 1
+        try: 
+            print("Merging Vlan: " + Vlans[0]  + " With Port: " + PortList[i])
+            Alinged_List = [PortList[i],Vlans[0],Vlans[1]]
+            Combined.append(Alinged_List)
+            i = i + 1
+        except IndexError:
+            print("More Vlans than ports Voiding Vlan Info:")
+            print(Vlans)
     #print(Combined)
 
 
