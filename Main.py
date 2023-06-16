@@ -1,7 +1,6 @@
 import csv
 from tabulate import tabulate
 from datetime import datetime
-import sys
 from OpenL2MScrape import *
 
 
@@ -14,19 +13,20 @@ from OpenL2MScrape import *
 # Have Table be written as a csv and text file - Completed
 # Have Program output the ports that need to be removed as a CutFile, Also as a text and Csv file - Completed
 # Add In Vlan Name and input - Completed
-# Set Default Vlan for all ports based off most common one
-# Fix the Dot Env Password system
+# Set Default Vlan for all ports based off most common one - Completed 
+# Fix the Dot Env Password system - Completed - 
 # Remove disabeld Vlans and set as Default Vlan
 # have Output Commands be In Numeric Order
-# Update the Readme
-# Check if all of the ports is greater than 48
+# Update the Readme 
+# Check if all of the ports is greater than 48 
 # Allow command line arguments
 # Upload to box
 # Create Trunk Commands List
 # Re-write whole program - need to do
 # Download AKIPS reports from List of Names, Csv
-# Rename Akips File to Name
-# Run Cutsheet System based off the files
+# Rename Akips File to Name - Completed 
+# Run Cutsheet System based off the files - Completed 
+# ADd ability to specify the ELEs - Completed 
 
 # Access Port Vlans - List of vlans that should by default be acess ports instead
 # of trunk ports
@@ -178,10 +178,21 @@ def GetNewPort(Sides): # New active devies
 
     return [RightInterfaces,LeftInterfaces]
 
+def AddELE(InputInterfaces,ELE):
+    for Interface in InputInterfaces:
+    # If there is an ele that was passed in the command line argument, and there is no ELE On the port
+     # then add the Specified ELE to it
+        if ELE != 'none':
+            if "###" not in Interface[6]:
+                # update the discription
+                Interface[6] = Interface[6] + " ###" + ELE
+    
+    return InputInterfaces
 
 
-def OutputCommands(Sides,Filename): # Write the HPE commands to a Txt file
-    RightInterfaces = Sides[0] # Get right side
+
+def OutputCommands(Sides, Filename):  # Write the HPE commands to a Txt file
+    RightInterfaces = Sides[0]  # Get right side
     LeftInterfaces = Sides[1] # get left side
 
     #Vlans On the Device
@@ -351,7 +362,7 @@ def GetVlans(Interfaces,Vlans): #query OpenL2MScrape to get the Vlans for the De
 
 
 # Main Section Here
-def BigFunc(File):
+def BigFunc(File,ELE):
 
 
     #File = "Aus-310-vfsw_Source.csv"
@@ -367,7 +378,7 @@ def BigFunc(File):
 
     print(f"The Devices Name is: {Filename} and all of the files will be output to its folder")
 
-
+    AddELE(Interfaces, ELE)
     #Return a list of ports that are deemed active based off cut off date, and current status
     #This is from the list of ports on the sheet
 

@@ -1,3 +1,4 @@
+from OpenL2MScrape import login, Quit
 from os import listdir
 from os import walk
 from os import mkdir
@@ -5,7 +6,7 @@ from Main import BigFunc
 import shutil
 import os
 import argparse
-from OpenL2MScrape import login, Quit
+
 import time
 mypath = "C:/Users/ripte/Documents/CutSheetCreator/Input"
 outputpath = "C:/Users/ripte/Documents/CutSheetCreator/Output"
@@ -16,9 +17,9 @@ parser = argparse.ArgumentParser(
     description='Take AKIPS Information and use it to generate Cutsheets')
 
 parser.add_argument('--username', '-u',
-                    help='Username for OpenL2M (ONID EX: Hopkinsr)', nargs=1, required=True)
+                    help='REQUIRED: Username for OpenL2M (ONID EX: Hopkinsr)', nargs=1, required=True)
 parser.add_argument('--password', '-p',
-                    help='Username for OpenL2M (ONID Password)', nargs=1, required=True)
+                    help='REQUIRED: Username for OpenL2M (ONID Password)', nargs=1, required=True)
 
 parser.add_argument('--mode', '-m',
                     help='[UNFINISHED WIP] Port Organizational Mode, Options: Managed, Unmanaged, Managed attempts to organizes interfaces and Patch Panel Cables through reordering Jack numbers then paring with interface (For full rewires) [ Defaults: Unmanaged]', nargs=1, default="Unmanaged")
@@ -26,14 +27,17 @@ parser.add_argument('--mode', '-m',
 parser.add_argument('--file', '-f',
                     help='Specify File Path for file that you want to parse, this will only run that singular file [Default: Will loop through input]', nargs=1, default="loop")
 
+parser.add_argument('--ELE', '-e',
+                    help='Specify an an ELE that you would like to add to each of the ports Descriptions [EX -e 35611] [Default: No ELE]', nargs=1, default="none")
 
 
 args = parser.parse_args()
 # print(parser.parse_args())
 # Get the Username
-print(args.username[0])
-print(args.password[0])
+#print(args.username[0])
+#print(args.password[0])
 print(args.file[0])
+print(args.ELE[0])
 
 def GetInputFiles():
 
@@ -42,13 +46,14 @@ def GetInputFiles():
     print(filenames)
     return filenames
 
+
+if args.file[0] != "":
+    print("Moving User Input File")
+    shutil.move(args.file[0], mypath + "/ userinput.csv")
+
 # Get all Input Files From Input Directory
 Files = GetInputFiles()
 
-# Check if Individual File Pass Through Argument was selected. 
-if args.file != "loop":
-    print("Individual File Processing Selected Skipping Files Found Above, Processing: " + args.file[0])
-    Files = args.file
 
 
 # Start the Selinum Instance 
@@ -63,6 +68,12 @@ for File in Files:
         
 
         Filepath =  mypath + "/" + File
+
+        # Check if Individual File Pass Through Argument was selected.
+        if args.file != "loop":
+            print("Individual File Processing Selected Skipping Files Found Above, Processing: " + args.file[0])
+            Filepath = args.file
+
         shutil.move(Filepath,Local +"/" + File )#Move file from input folder to main dir for processing
         #Completed = Completed + "/" + File
         print("File Moved to Processing Directory...")
@@ -72,7 +83,8 @@ for File in Files:
 
         print("Running File: " + Filename)
 
-        NewFilename = BigFunc(File) # Get the filename from the Akips File Hostname
+        # Get the filename from the Akips File Hostname
+        NewFilename = BigFunc(File, args.ELE[0])
 
         # Make Output Directory
         path = os.path.join(outputpath + "/", NewFilename)
