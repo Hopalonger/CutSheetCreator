@@ -27,7 +27,13 @@ def login(User_cred,Pass_cred):
     password.send_keys(Pass_cred)
     driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
     print("Logged In")
-    
+
+# Make sure that the vlan on the switch is a valid vlan, or not set to one that 
+# is disabled or not set to any vlan on the switch. 
+def CheckIfValidVlan(Row):   
+    if Row[0] == "1" or Row[0] == "999":
+        Row = ["1100", "CN-UnivAdm_W"]
+    return Row
 
 def getVlan(switchUrl): #Get the vlans and write them to a file
     #print(switchUrl)
@@ -40,12 +46,27 @@ def getVlan(switchUrl): #Get the vlans and write them to a file
         Words = input.getText() # Get the text, its very long
         #print(Words)
         List = Words.split("\n") # split the new line values into list
-        #print(List)
+        print("Vlan Input Information: ")
+        print(List)
+        # split the values of Vlan into segments, From ['1114 - CN-StudentAdmin_W'] -> [1114,CN,StudentAdmin_W]
+        List = List[0].split("-")
         try:
-            List[1] = List[1].strip() # Remove whitespace from second item in list
-            #print(List[1])
-            row = [input.get('value'), List[1][2:]]
-           # print(row)
+
+            # If the Vlan info was seperated into something like this [1114,CN,StudentAdmin_W]
+            # Then put the Vlan Name Information Back togehter as one string  [1114,CN,StudentAdmin_W] - > "CN-StudentAdmin_W"
+            VlanName = List[1].strip()
+            i = 2
+            while i < len(List): 
+                VlanName = VlanName + "-" + List[i].strip() 
+                i += 1 
+
+            # put the Vlan Number and Vlan Name in a list 
+            row = [input.get('value'), VlanName]
+
+            row = CheckIfValidVlan(row)
+
+            print("Final Row Output:")
+            print(row)
             VlanList.append(row)
         #    print(row)
         #    writer.writerow(row)

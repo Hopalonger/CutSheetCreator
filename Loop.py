@@ -47,7 +47,7 @@ def GetInputFiles():
     return filenames
 
 
-if args.file[0] != "loop":
+if args.file != "loop":
     print("Moving User Input File")
     shutil.move(args.file[0], mypath + "/userinput.csv")
 
