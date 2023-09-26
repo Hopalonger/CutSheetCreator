@@ -190,6 +190,102 @@ def AddELE(InputInterfaces,ELE):
     return InputInterfaces
 
 
+def parse_value(value):
+    if 'OPEN' in value:
+        return float('inf')
+
+    # If there's a '/', consider the value after it.
+    if '/' in value:
+        value = value.split('/')[1]
+    print(value)
+    # if there is a '###' consider the value before it
+    if '###' in value:
+        value = value.split('###')[0]
+    print(value)
+
+    # remove whitespace from the D.###
+
+    value = value.strip()
+
+    # Extracting numbers.
+    numbers = [int(n) for n in value.split('.') if n.isdigit()]
+    if numbers:
+        return numbers[-1]
+    return None
+
+
+def sort_interfaces(interfaces):
+    for i, interface in enumerate(interfaces):
+        value = parse_value(interface[6])
+        if value is None:
+            print()
+            user_input = get_interface_input_strict(interface[6])
+            if user_input == 'open':
+                value = float('inf')
+            else:
+                value = int(user_input)
+        interface.append(value)
+    return sorted(interfaces, key=lambda x: x[-1])
+
+# Used to parse the user input for when there is an invalid input 
+
+
+def get_interface_input_strict(interface):
+    while True:
+        user_input = input(
+            f"Cannot determine value for {interface}. Please enter a number or type 'open': ").strip().lower()
+
+        if user_input.lower() == "open":
+            return user_input
+
+        if (user_input.startswith("D.") and user_input[2:].isdigit()):
+            return user_input.replace("D.","")
+        
+        if user_input.isdigit():
+            return user_input
+
+        print(
+            "Invalid input. Please enter a value in the format 'D.012', '012', or 'OPEN'.")
+
+
+def verify_duplicates(sorted_interfaces):
+    seen = {}
+    for interface in sorted_interfaces:
+        if interface[6] in seen and ("open" not in interface[6].strip().lower()):
+            user_input = input(f"Please verify: {interface[1]} With current Description: {interface[6]}")
+            if not user_input:
+                continue
+        seen[interface[6]] = True
+    return sorted_interfaces
+
+
+def split_sides(interfaces):
+    left, right = [], []
+    for i, interface in enumerate(interfaces):
+        if (interface[-1] - 1) % 24 < 12:
+            left.append(interface)
+        else:
+            right.append(interface)
+    return left, right
+
+
+
+def SortByPort(Sides):
+    # Combine right and left interfaces.
+    combined = Sides[0] + Sides[1]
+
+    # Sort interfaces.
+    sorted_interfaces = sort_interfaces(combined)
+
+    # Check and verify duplicates.
+    verified_interfaces = verify_duplicates(sorted_interfaces)
+
+    # Split sides.
+    left, right = split_sides(verified_interfaces)
+
+    # Return as required: right as 0th item and left as 1st.
+    return [right, left]
+
 
 def OutputCommands(Sides, Filename):  # Write the HPE commands to a Txt file
     RightInterfaces = Sides[0]  # Get right side
@@ -319,7 +415,7 @@ def QueryVlans(Name):
 
 def GetVlans(Interfaces,Vlans): #query OpenL2MScrape to get the Vlans for the Device
     # Get a list of vlans for each port from OpenL2M
-    Combined_List = QueryVlans(Interfaces[1][0]) #Use Device Name
+    Combined_List = QueryVlans(Interfaces[1][0])  # Use Device Name
 
     # Combined list: Interface Number, Vlan Number, Vlan Name
     i = 0
@@ -331,15 +427,14 @@ def GetVlans(Interfaces,Vlans): #query OpenL2MScrape to get the Vlans for the De
             # Get the Interfaces Inteface Number and check if its first letter starts
             # With G
             if Interface[1][0] == 'G':
-            #    print(VlansList)
-            #    print(i)
-                #print(Interfaces)
+                
+
                 # Go through Combined List of Vlans and Ports
-                Vlan_Name = ""
+                Vlan_Name = 999
                 for Tray in Combined_List:
                     # Find the combined Interface
                     if Tray[0] == Interface[1]:
-                        print(Tray)
+                        #print(Tray)
                         # if the Vlan for the interface is Disabled or not set, set it to vlan 1270
                         if Tray[1] == 999 or Tray[1] == 1:
                             PortVlan = 1270
@@ -362,7 +457,7 @@ def GetVlans(Interfaces,Vlans): #query OpenL2MScrape to get the Vlans for the De
 
 
 # Main Section Here
-def BigFunc(File,ELE):
+def BigFunc(File,ELE,Mode):
 
 
     #File = "Aus-310-vfsw_Source.csv"
@@ -396,6 +491,11 @@ def BigFunc(File,ELE):
     #print(tabulate(Interfaces, headers=["Device","Interface ID","Speed","Status","State","Last Change","Desc","Vlan Name","Vlan ID" ], tablefmt="pretty"))
 
     Sides = Organize(ActiveInts)
+
+    # if we want to have the ports sorted by there D Number then use managed mode
+    if Mode == "Managed":
+        Sides = SortByPort(Sides)
+
     Sides = GetNewPort(Sides)
 
     print("Right Side Interfaces Have Been Organized and generated") 

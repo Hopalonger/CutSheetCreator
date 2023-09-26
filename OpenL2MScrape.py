@@ -65,8 +65,11 @@ def getVlan(switchUrl): #Get the vlans and write them to a file
 
             row = CheckIfValidVlan(row)
 
-            print("Final Row Output:")
-            print(row)
+
+           # print("Final Row Output:")
+           # print(row)
+
+
             VlanList.append(row)
         #    print(row)
         #    writer.writerow(row)
@@ -99,19 +102,23 @@ def getVlan(switchUrl): #Get the vlans and write them to a file
                 Interface = data.text.strip()
                 # If this is the first colum of the row and the Interface is not a F Type interface
                 if(t == 0):
-                    #if (Interface[0] == "T" or Interface[0] == "G"):
-                    if(Interface[0] == "G"):
+                    if (Interface[0] == "T" or Interface[0] == "G"):
+                    #if(Interface[0] == "G"):
                         # Add the Interface to a new list of ports
                         PortList.append(Interface)
                 t = t + 1
         Num = 1 + Num
-    print(PortList)
+
+
+    #print(PortList)
     # Combined the Lists Together
     Combined = []
     i = 0
     for Vlans in VlanList:
         # Set the list to have the Port, Vlan Number, then vlan Name
         #print(PortList[i])
+    
+
         try: 
             print("Merging Vlan: " + Vlans[0]  + " With Port: " + PortList[i])
             Alinged_List = [PortList[i],Vlans[0],Vlans[1]]
@@ -120,11 +127,23 @@ def getVlan(switchUrl): #Get the vlans and write them to a file
         except IndexError:
             print("More Vlans than ports Voiding Vlan Info:")
             print(Vlans)
-    #print(Combined)
+         #print(Combined)
 
 
 
     return Combined
+
+# Check if the port that is provided is valid for a cutsheet
+# This would be all gigiabit ports on Models with X/Y/Z format, and all 
+# Gigabit Ports in X/Z Format where X is greater than 1 
+# IF the Port is not valid return false else return true 
+def CheckPort(Port):
+    #print(Port[2:3])
+
+    if Port[2:3] == 1: 
+        return False 
+    
+    return True 
 
 def GetTable(switchUrl):
     print(switchUrl)

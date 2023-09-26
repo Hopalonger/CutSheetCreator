@@ -22,7 +22,7 @@ parser.add_argument('--password', '-p',
                     help='REQUIRED: Username for OpenL2M (ONID Password)', nargs=1, required=True)
 
 parser.add_argument('--mode', '-m',
-                    help='[UNFINISHED WIP] Port Organizational Mode, Options: Managed, Unmanaged, Managed attempts to organizes interfaces and Patch Panel Cables through reordering Jack numbers then paring with interface (For full rewires) [ Defaults: Unmanaged]', nargs=1, default="Unmanaged")
+                    help=' Port Organizational Mode, Options: Managed, Unmanaged, Managed attempts to organizes interfaces and Patch Panel Cables through reordering Jack numbers then paring with interface (For full rewires) [ Defaults: Unmanaged]', nargs=1, default="Unmanaged")
 
 parser.add_argument('--file', '-f',
                     help='Specify File Path for file that you want to parse, this will only run that singular file [Default: Will loop through input]', nargs=1, default="loop")

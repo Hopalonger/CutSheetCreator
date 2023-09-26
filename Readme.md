@@ -89,3 +89,10 @@ If you get an error that states that the chromedriver that is being used is out 
 - Specify Port Types Based off Vlan
 - Automatic File management
 - Automatic Cable Management
+
+### Todo: 
+- 
+- Add in ability to Catch and Deal with WAP's and the W.XXX Series of ports
+- Add in checking for the password being wrong for the OPENL2M Login
+- Build The managed mode into the GUI
+- Refactor Code
