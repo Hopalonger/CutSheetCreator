@@ -36,8 +36,7 @@ args = parser.parse_args()
 # Get the Username
 #print(args.username[0])
 #print(args.password[0])
-print(args.file[0])
-print(args.ELE[0])
+
 
 def GetInputFiles():
 
@@ -79,12 +78,12 @@ for File in Files:
         print("Running File: " + Filename)
 
         # Get the filename from the Akips File Hostname
-        NewFilename = BigFunc(File, args.ELE[0])
+        NewFilename = BigFunc(File, args.ELE[0], args.mode[0])
 
         # Make Output Directory
         path = os.path.join(outputpath + "/", NewFilename)
 
-        # Try to make a Directory
+        # Try to make a Directory 
         try:
             os.mkdir(path)
         except FileExistsError:
